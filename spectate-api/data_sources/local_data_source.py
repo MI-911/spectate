@@ -1,4 +1,5 @@
 import json
+import math
 import os
 from typing import Set, Dict, List
 
@@ -41,7 +42,8 @@ class LocalDataSource(DataSource):
                     model_result = json.load(fp)
 
                     for key, scores in model_result.items():
-                        question_score[key] = scores[metric][cutoff]
+                        score = scores[metric][cutoff]
+                        question_score[key] = 0 if math.isnan(score) else score
 
             model_scores[model] = list(question_score.values())
 
