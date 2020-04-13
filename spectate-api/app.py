@@ -1,10 +1,13 @@
 #!flask/bin/python
+from flask_cors import CORS
+
 from data_sources.aggregating_data_source import AggregatingDataSource
 from data_sources.local_data_source import LocalDataSource
 from flask import Flask, jsonify
 
 app = Flask(__name__)
 source = AggregatingDataSource([LocalDataSource('/results')])
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 @app.route('/experiments')

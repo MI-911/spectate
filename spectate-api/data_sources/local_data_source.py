@@ -43,6 +43,6 @@ class LocalDataSource(DataSource):
                     for key, scores in model_result.items():
                         question_score[key] = scores[metric][cutoff]
 
-            model_scores[model] = question_score
+            model_scores[model] = list(question_score.values())
 
         return model_scores
