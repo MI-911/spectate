@@ -7,15 +7,15 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 source = AggregatingDataSource([LocalDataSource('/results')])
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/spectate-api/*": {"origins": "*"}})
 
 
-@app.route('/experiments')
+@app.route('/spectate-api/experiments')
 def experiments():
     return jsonify(list(source.experiments()))
 
 
-@app.route('/results/<experiment>/<metric>/<cutoff>')
+@app.route('/spectate-api/results/<experiment>/<metric>/<cutoff>')
 def results(experiment, metric, cutoff):
     return jsonify(source.results(experiment, metric, cutoff))
 
