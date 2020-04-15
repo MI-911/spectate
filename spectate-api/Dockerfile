@@ -4,4 +4,4 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 ADD . /app/
 ENV PYTHONPATH /app
-ENTRYPOINT FLASK_APP=/app/app.py flask run --host=0.0.0.0
+ENTRYPOINT python app.py
