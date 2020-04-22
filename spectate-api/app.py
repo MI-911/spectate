@@ -47,8 +47,8 @@ def table(experiment, metric, cutoff):
 
             to_compare = [scores]
             if question_idx:
-                # Compare against values for the first question
-                to_compare.append(values[0])
+                # Compare against values for the previous #questions
+                to_compare.append(values[question_idx - 1])
 
                 # In some cases, there may be an uneven amount of splits if testing is still ongoing
                 # In these cases, we perform the t-test on the minimum list length
