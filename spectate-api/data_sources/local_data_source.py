@@ -1,6 +1,7 @@
 import json
 import math
 import os
+from collections import defaultdict
 from typing import Set, Dict, List
 
 from data_sources.data_source import DataSource
@@ -33,7 +34,7 @@ class LocalDataSource(DataSource):
             if not os.path.isdir(model_path):
                 continue
 
-            question_score = dict()
+            question_score = defaultdict(list)
             for split in os.listdir(model_path):
                 if not split.endswith('.json'):
                     continue
@@ -43,8 +44,11 @@ class LocalDataSource(DataSource):
 
                     for key, scores in model_result.items():
                         score = scores[metric][cutoff]
-                        question_score[key] = 0 if math.isnan(score) else score
 
-            model_scores[model] = list(question_score.values())
+                        # Since JSON cannot parse NaN treat all occurrences as zero
+                        question_score.setdefault(key, []).append(0 if math.isnan(score) else score)
+
+            # Return sorted by question number
+            model_scores[model] = [pair[1] for pair in sorted(question_score.items(), key=lambda x: int(x[0]))]
 
         return model_scores
