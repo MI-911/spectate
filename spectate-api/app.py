@@ -37,7 +37,7 @@ def table(experiment, metric, cutoff):
     for model, values in model_results.items():
         row = [model]
 
-        for question_idx in range(questions):
+        for question_idx in range(len(values)):
             scores = values[question_idx]
 
             mean = np.mean(scores)
@@ -45,11 +45,15 @@ def table(experiment, metric, cutoff):
 
             content = f'{mean:.2f}±{std:.2f}'
 
+            to_compare = [scores]
             if question_idx:
                 # Compare against values for the first question
-                compare_against = values[0]
+                to_compare.append(values[0])
 
-                p_value = ttest_rel(compare_against, scores)[1]
+                # In some cases, there may be an uneven amount of splits if testing is still ongoing
+                # In these cases, we perform the t-test on the minimum list length
+                min_length = len(min(to_compare, key=len))
+                p_value = ttest_rel(*[lst[:min_length] for lst in to_compare])[1]
 
                 if p_value < significance_level:
                     content += '*'
