@@ -87,7 +87,10 @@ def save_results(experiment, model, split):
         if not isinstance(src, LocalDataSource):
             continue
 
-        full_path = os.path.join(os.path.join(os.path.join(src.base_path, experiment), model), f'{split}.json')
+        dir_path = os.path.join(os.path.join(src.base_path, experiment), model)
+        os.makedirs(dir_path, exist_ok=True)
+
+        full_path = os.path.join(dir_path, f'{split}.json')
         with open(full_path, 'w') as fp:
             json.dump(request.json, fp)
 
