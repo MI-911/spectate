@@ -35,7 +35,7 @@ class LocalDataSource(DataSource):
                 continue
 
             question_score = defaultdict(list)
-            for split in os.listdir(model_path):
+            for split in sorted(os.listdir(model_path)):
                 if not split.endswith('.json'):
                     continue
 

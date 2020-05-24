@@ -1,4 +1,5 @@
 #!flask/bin/python
+import json
 import os
 import sys
 
@@ -68,7 +69,7 @@ def table(experiment, metric, cutoff):
 
 
 @app.route('/spectate/results/<experiment>/<metric>/<cutoff>')
-def results(experiment, metric, cutoff):
+def get_results(experiment, metric, cutoff):
     model_results = source.results(experiment, metric, cutoff)
 
     # Each value is a list containing a score for each split
@@ -78,6 +79,19 @@ def results(experiment, metric, cutoff):
             model_results[model] = [np.mean(question_scores) for question_scores in values]
 
     return jsonify(model_results)
+
+
+@app.route('/spectate/results/<experiment>/<model>/<split>', methods=['POST'])
+def save_results(experiment, model, split):
+    for src in source.sources:
+        if not isinstance(src, LocalDataSource):
+            continue
+
+        full_path = os.path.join(os.path.join(os.path.join(src.base_path, experiment), model), f'{split}.json')
+        with open(full_path, 'w') as fp:
+            json.dump(request.json, fp)
+
+    return jsonify(success=True)
 
 
 def _get_source(src):
