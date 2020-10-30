@@ -21,6 +21,7 @@ app = Flask(__name__)
 source = EmptyDataSource()
 cors = CORS(app, resources={r"/spectate/*": {"origins": "*"}})
 significance_level = 0.05
+secret_key = os.environ.get('SECRET_KEY')
 
 
 @app.route('/spectate/experiments')
@@ -83,6 +84,9 @@ def get_results(experiment, metric, cutoff):
 
 @app.route('/spectate/results/<experiment>/<model>/<split>', methods=['POST'])
 def save_results(experiment, model, split):
+    if not secret_key or request.headers.get('X-SECRET-KEY') != secret_key:
+      return 'Invalid Key', 401
+
     for src in source.sources:
         if not isinstance(src, LocalDataSource):
             continue
